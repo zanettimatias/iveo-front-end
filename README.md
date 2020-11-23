@@ -1,6 +1,7 @@
 # iVEO
 
-> A native application built with NativeScript-Vue
+> Una aplicacion movil, para identificar objetos o productos en tiempo real
+
 
 ## Usage
 

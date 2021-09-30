@@ -1,9 +1,8 @@
 <template>
     <Page>
         <ActionBar>
-            <Label text="Home"/>
+            <Label text="Inicio"/>
         </ActionBar>
-
         <GridLayout>
             <Label class="info">
                 <FormattedString>
@@ -19,7 +18,7 @@
   export default {
     computed: {
       message() {
-        return "Blank {N}-Vue app";
+        return "iVEO";
       }
     }
   };
@@ -34,7 +33,7 @@
     }
 
     .info {
-        font-size: 20;
+        font-size: 60;
         horizontal-align: center;
         vertical-align: center;
     }

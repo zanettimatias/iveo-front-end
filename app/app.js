@@ -5,7 +5,9 @@ Vue.use(YoonitCamera)
 
 import Home from '@/components/Home'
 import Match from '@/components/Match'
+import YooCameraExample from '@/components/YooCameraExample'
+
 
 new Vue({
-  render: (h) => h('frame', [h(Home)]),
+  render: (h) => h('frame', [h(Match)]),
 }).$start()

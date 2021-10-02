@@ -4,6 +4,7 @@
   "version": "1.0.0",
   "private": true,
   "dependencies": {
+    "@nativescript-community/texttospeech": "^3.0.3",
     "@nativescript/background-http": "^5.0.2",
     "@nativescript/core": "~8.1.1",
     "@nativescript/theme": "~3.0.1",

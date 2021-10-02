@@ -20,24 +20,25 @@ export class HttpService {
         );
         return task = session.multipartUpload(params, request);
     }
-    static newProductoTestMulti(imagenes) {
+    static newProductoTestMulti(dataArray, imagenes) {
         return new Promise((resolve, reject) => {
             let task = null;
             let request = {
-                url: serverPath + "http://httpbin.org/post",
+                url: serverPath + "/test/new/multi",
                 method: "POST",
                 headers: {
                     "Content-Type": "application/octet-stream"
                 },
                 description: "Subiendo archivos a "
             };
-
             let files = []
-            imagenes.forEach(element =>
-                files.push({ name: "imagen", filename: element, mimeType: "image/jpeg" })
-            );
-            task = session.multipartUpload(files, request);
+            dataArray.forEach(element => files.push(element))
+            imagenes.forEach(element => {
+                const name = element.path.substr(element.path.lastIndexOf("/") + 1);
+                files.push({ name: "files", filename: element.path, mimeType: "image/jpeg" })
+            });
 
+            task = session.multipartUpload(files, request);
             task.on("progress", (e) => {
                 // console log data
                 console.log(`uploading... ${e.currentBytes} / ${e.totalBytes}`);

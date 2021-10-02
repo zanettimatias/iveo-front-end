@@ -23,8 +23,6 @@
 		android:theme="@style/AppTheme"
 		android:hardwareAccelerated="true"
 		android:usesCleartextTraffic="true">
-		
-
 		<activity
 			android:name="com.tns.NativeScriptActivity"
 			android:label="@string/title_activity_kimera"
@@ -42,4 +40,10 @@
 		</activity>
 		<activity android:name="com.tns.ErrorReportActivity"/>
 	</application>
+	 <queries>
+
+  <intent>
+      <action android:name="android.intent.action.TTS_SERVICE" />
+  </intent>
+ </queries>
 </manifest>

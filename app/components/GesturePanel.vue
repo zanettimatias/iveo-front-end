@@ -1,6 +1,6 @@
 <template>
-  <AbsoluteLayout @longPress="longPress">
-    <ActionButton :label="btnLabel" top="1" left="1"/>
+  <AbsoluteLayout @longPress="longPress" v-if="!prevented">
+    <ActionButton :label="btnLabel" top="1" left="1" />
   </AbsoluteLayout>
 </template>
 <script>
@@ -12,11 +12,14 @@ export default {
     btnLabel: {
       default: "",
     },
+    prevented: {
+      default: false,
+    },
   },
   methods: {
-      longPress(){
-          this.$emit("longPress")
-      }
+    longPress() {
+      this.$emit("longPress");
+    },
   },
 };
 </script>

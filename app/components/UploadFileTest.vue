@@ -9,8 +9,13 @@
         <v-template>
           <StackLayout>
             <Label :text="item.description"></Label>
-            <Progress :value="item.upload" :maxValue="item.totalUpload"></Progress>
-            <Label :text="'Uploading: ' + item.upload + ' / ' + item.totalUpload"></Label>
+            <Progress
+              :value="item.upload"
+              :maxValue="item.totalUpload"
+            ></Progress>
+            <Label
+              :text="'Uploading: ' + item.upload + ' / ' + item.totalUpload"
+            ></Label>
             <Label :text="'Status: ' + item.status"></Label>
           </StackLayout>
         </v-template>
@@ -25,8 +30,20 @@
         </v-template>
       </ListView>
       <Button row="3" margin="2" text="Upload!" @tap="onUploadTap"></Button>
-      <Button row="3" col="1" margin="2" text="Error-Up!" @tap="onUploadWithErrorTap"></Button>
-      <Button row="3" col="2" margin="2" text="MultiPart-Up!" @tap="onUploadMultiTap"></Button>
+      <Button
+        row="3"
+        col="1"
+        margin="2"
+        text="Error-Up!"
+        @tap="onUploadWithErrorTap"
+      ></Button>
+      <Button
+        row="3"
+        col="2"
+        margin="2"
+        text="MultiPart-Up!"
+        @tap="onUploadMultiTap"
+      ></Button>
     </GridLayout>
   </Page>
 </template>
@@ -36,7 +53,7 @@ const bgHttp = require("@nativescript/background-http");
 const fs = require("@nativescript/core/file-system");
 const platform = require("@nativescript/core/platform");
 export default {
-    name: "UploadFileTest",
+  name: "UploadFileTest",
   data() {
     return {
       tasks: [],
@@ -47,21 +64,21 @@ export default {
       // NOTE: This works for emulator. Real device will need other address.
       url: platform.isIOS ? "http://localhost:8080" : "http://10.0.2.2:8080",
       session: bgHttp.session("image-upload"),
-      counter: 0
+      counter: 0,
     };
   },
   methods: {
-    onUploadWithErrorTap: function(e) {
+    onUploadWithErrorTap: function (e) {
       this.session = bgHttp.session("image-upload");
       this.startUpload(true, false);
     },
-    onUploadTap: function(e) {
+    onUploadTap: function (e) {
       this.startUpload(false, false);
     },
-    onUploadMultiTap: function() {
+    onUploadMultiTap: function () {
       this.startUpload(false, true);
     },
-    startUpload: function(shouldFail, isMulti) {
+    startUpload: function (shouldFail, isMulti) {
       console.log(
         (shouldFail ? "Testing error during upload of " : "Uploading file: ") +
           this.file +
@@ -74,11 +91,11 @@ export default {
         method: "POST",
         headers: {
           "Content-Type": "application/octet-stream",
-          "File-Name": name
+          "File-Name": name,
         },
         description: description,
         androidAutoDeleteAfterUpload: false,
-        androidNotificationTitle: "NativeScript HTTP background"
+        androidNotificationTitle: "NativeScript HTTP background",
       };
       if (shouldFail) {
         request.headers["Should-Fail"] = true;
@@ -90,7 +107,7 @@ export default {
           { name: "test", value: "value" },
           { name: "testInt", value: 10 },
           { name: "bool", value: true },
-          { name: "fileToUpload", filename: this.file, mimeType: 'image/jpeg' }
+          { name: "fileToUpload", filename: this.file, mimeType: "image/jpeg" },
         ];
         task = this.session.multipartUpload(params, request);
       } else {
@@ -110,8 +127,8 @@ export default {
             currentBytes: e.currentBytes,
             totalBytes: e.totalBytes,
             body: e.data,
-            responseCode: e.responseCode
-          })
+            responseCode: e.responseCode,
+          }),
         });
         this.$set(this.tasks, this.tasks.indexOf(task), task);
       }
@@ -125,7 +142,7 @@ export default {
     onItemLoading(args) {
       let label = args.view.getViewById("imageLabel");
       label.text = "image " + args.index;
-    }
-  }
+    },
+  },
 };
 </script>

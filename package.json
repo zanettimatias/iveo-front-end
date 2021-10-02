@@ -4,6 +4,7 @@
   "version": "1.0.0",
   "private": true,
   "dependencies": {
+    "@nativescript/background-http": "^5.0.2",
     "@nativescript/core": "~8.1.1",
     "@nativescript/theme": "~3.0.1",
     "@yoonit/nativescript-camera": "^3.2.1",

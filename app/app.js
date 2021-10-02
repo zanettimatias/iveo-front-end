@@ -7,6 +7,8 @@ import Home from '@/components/Home'
 import Match from '@/components/Match'
 import YooCameraExample from '@/components/YooCameraExample'
 
+import UploadFileTest from '@/components/UploadFileTest'
+
 
 new Vue({
   render: (h) => h('frame', [h(Match)]),

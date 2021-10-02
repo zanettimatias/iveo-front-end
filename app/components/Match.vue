@@ -30,22 +30,17 @@
           @status="doStatus"
           @permissionDenied="doPermissionDenied"
         />
-        <GridLayout
-          height="100%"
-          width="100%"
-      >
-        <FlexboxLayout
-            flexDirection="column"
-            justifyContent="flex-end"
-        >
-          <Image
+        <GridLayout height="100%" width="100%">
+          <FlexboxLayout flexDirection="column" justifyContent="flex-end">
+            <Image
               :src="imagePath"
-              width="200"
-              height="200"
+              width="50"
+              height="50"
               v-if="showThumbnail"
-          />
-        </FlexboxLayout>
-      </GridLayout>
+              class="roundedImage"
+            />
+          </FlexboxLayout>
+        </GridLayout>
       </GridLayout>
       <GesturePanel @longPress="longPress" btnLabel="test" />
     </GridLayout>
@@ -56,12 +51,17 @@
 import { knownFolders, path, isAndroid } from "@nativescript/core";
 import ActionButton from "~/components/ActionButton.vue";
 import GesturePanel from "~/components/GesturePanel.vue";
+import { HttpService } from "~/services/HttpService";
+
+const bghttp = require("@nativescript/background-http");
+const fs = require("@nativescript/core/file-system");
+const platform = require("@nativescript/core/platform");
 
 export default {
   components: { ActionButton, GesturePanel },
   data: () => ({
     panel: "analysis",
-    cameraLens: "back",
+    cameraLens: "front",
     captureType: "none",
     enableCamera: true,
     enableTorch: false,
@@ -69,13 +69,16 @@ export default {
     enableROI: false,
     enableROIAreaOffsetColor: false,
     imagePath: null,
-    showThumbnail: false
+    showThumbnail: false,
+    imagenes: [],
+    imagen: null,
+    file: fs.path.normalize(fs.knownFolders.currentApp().path + "/bigpic.jpg"),
   }),
 
   methods: {
     async showThumbnailAsync() {
-      this.showThumbnail=true;
-      setTimeout(() => this.showThumbnail = false, 1500);
+      this.showThumbnail = true;
+      setTimeout(() => (this.showThumbnail = false), 1500);
     },
     async onLoaded() {
       this.$yoo.camera.registerElement(this.$refs.yooCamera);
@@ -117,7 +120,14 @@ export default {
       this.imageLightness = parseFloat(lightness).toFixed(4);
       this.imageSharpness = parseFloat(sharpness).toFixed(4);
       this.imagePath = source;
-      this.showThumbnailAsync();
+      this.imagen = path;
+      this.imagenes.push(path);
+    },
+    doEndCapture() {
+      HttpService.newProductoSingle(file)
+        .then(() => console.log("funcion"))
+        .catch((err) => console.log("se rompio todo"))
+        .finally(() => (this.imagenes = []));
     },
   },
 };
@@ -148,5 +158,8 @@ Button {
   text-align: center;
   font-size: 20;
   color: #333333;
+}
+.roundedImage {
+  border-radius: 100;
 }
 </style>

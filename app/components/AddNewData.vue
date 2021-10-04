@@ -76,7 +76,7 @@ export default {
   },
   methods: {
     doSave() {
-      indicator.show({ message: "Subiendo archivos", dimBackground: true });
+      indicator.show({ message: Indications.ADDNEWPRODUCTOPROGRESS, dimBackground: true });
       SpeakService.speak(Indications.ADDNEWPRODUCTOPROGRESS);
       HttpService.newProductoTestMulti(this.multiPartFileFactory())
         .then((e) => {

@@ -23,7 +23,7 @@
           :roiBottomOffset="'10%'"
           :roiLeftOffset="'10%'"
           :imageCapture="enableImageCapture"
-          :imageCaptureAmount="6"
+          :imageCaptureAmount="1"
           :imageCaptureInterval="300"
           @imageCaptured="doImageCaptured"
           @endCapture="doEndCapture"
@@ -44,8 +44,7 @@
       </GridLayout>
       <GesturePanel
         btnLabel="Escaneando objeto.."
-        @longPressStart="startCapture"
-        @longPressStop="stopCapture"
+        @longPressStop="startCapture"
       />
     </GridLayout>
   </Page>
@@ -58,6 +57,9 @@ import { HttpService } from "~/services/HttpService";
 import { SpeakService } from "~/services/SpeakService";
 import AddNewData from "~/components/AddNewData";
 import { Indications } from "~/services/locale/indications-es";
+import { LoadingIndicator } from "@nstudio/nativescript-loading-indicator";
+
+const indicator = new LoadingIndicator();
 
 export default {
   components: { ActionButton, GesturePanel },
@@ -132,16 +134,38 @@ export default {
       this.imagenes.push({ path: path, source: source });
     },
     doEndCapture() {
-      this.$navigateTo(AddNewData, {
-        transition: {
-          name: "slideLeft",
-          duration: 200,
-          curve: "easeIn",
-        },
-        props: {
-          imagenes: this.imagenes,
-        },
+      indicator.show({
+        message: Indications.MATCHPROGRESS,
+        dimBackground: true,
       });
+      SpeakService.speak(Indications.MATCHPROGRESS);
+      HttpService.match(this.multiPartFileFactory())
+        .then((e) => {
+          indicator.hide();
+          SpeakService.speak(Indications.ADDNEWPRODUCTOSUCESS);
+          this.back();
+        })
+        .catch((err) => {
+          indicator.hide();
+          SpeakService.speak(Indications.ADDNEWPRODUCTOERROR);
+          console.log(err);
+        });
+    },
+    multiPartFileFactory() {
+      let multipartFiles = [];
+      multipartFiles.push(...this.filesFactory());
+      return multipartFiles;
+    },
+    filesFactory() {
+      let files = [];
+      this.imagenes.forEach((element) => {
+        files.push({
+          name: "files",
+          filename: element.path,
+          mimeType: "image/jpeg",
+        });
+      });
+      return files;
     },
   },
 };

@@ -30,36 +30,23 @@
           @status="doStatus"
           @permissionDenied="doPermissionDenied"
         />
+        <GridLayout height="100%" width="100%">
+          <FlexboxLayout flexDirection="column" justifyContent="flex-end">
+            <Image
+              :src="imagePath"
+              width="50"
+              height="50"
+              v-if="showThumbnail"
+              class="roundedImage"
+            />
+          </FlexboxLayout>
+        </GridLayout>
       </GridLayout>
-      <GesturePanel @longPress="longPress" btnLabel="test" :prevented="preventGestureCamera"/>
-      <StackLayout ref="form" v-if="showForm" class="formulario">
-        <Label
-          :text="indicactions.COMPLETARFORMULARIO"
-          textWrap="true"
-          textAlignment="left"
-          class="titulo"
-          marginLeft="15"
-          marginTop="15"
-        />
-        <TextField :text="marca" hint="Marca" />
-        <TextField :text="modelo" hint="Modelo" />
-        <TextField :text="material" hint="Material" />
-        <TextField :text="envase" hint="Envase" />
-        <TextField :text="contenido" hint="Contenido" />
-        <TextField :text="color" hint="Color, si aplica" />
-        <TextField
-          :text="descripcion"
-          hint="Complete una descripción que identifique al objeto"
-        />
-        <WrapLayout>
-          <Image v-for="imageSource in imagenesSources" v-bind:key="imageSource" class="thumbnail" stretch="fill"
-            :src="imageSource"
-            width="100"
-            height="100"
-          />
-        </WrapLayout>
-      </StackLayout>
-      <GesturePanel btnLabel="Confirmar" :prevented="preventGestureForm"/>
+      <GesturePanel
+        btnLabel="Escaneando objeto.."
+        @longPressStart="startCapture"
+        @longPressStop="stopCapture"
+      />
     </GridLayout>
   </Page>
 </template>
@@ -69,6 +56,7 @@ import ActionButton from "~/components/ActionButton.vue";
 import GesturePanel from "~/components/GesturePanel.vue";
 import { HttpService } from "~/services/HttpService";
 import { SpeakService } from "~/services/SpeakService";
+import AddNewData from "~/components/AddNewData";
 import { Indications } from "~/services/locale/indications-es";
 
 export default {
@@ -86,20 +74,10 @@ export default {
     showThumbnail: false,
     imagenes: [],
     imagen: null,
-    marca: "",
-    material: "",
-    envase: "",
-    descripcion: "",
-    color: "",
-    contenido: "",
-    modelo: "",
-    showForm: false,
-    indicactions: Indications,
-    imagenesPath: [],
-    imagenesSources: [],
-    preventGestureCamera: false
   }),
-  mounted() {},
+  mounted() {
+    SpeakService.speak(Indications.MATCHINICIAR);
+  },
   methods: {
     async showThumbnailAsync() {
       this.showThumbnail = true;
@@ -115,8 +93,13 @@ export default {
         this.$yoo.camera.preview();
       }
     },
-    longPress() {
+    startCapture() {
+      this.imagenes = [];
       this.$yoo.camera.startCapture("frame");
+    },
+    stopCapture() {
+      this.$yoo.camera.stopCapture();
+      this.doEndCapture();
     },
     doImageCaptured({
       type,
@@ -146,27 +129,19 @@ export default {
       this.imageSharpness = parseFloat(sharpness).toFixed(4);
       this.imagePath = source;
       this.imagen = path;
-      this.imagenesPath.push(path);
-      this.imagenesSources.push(source);
+      this.imagenes.push({ path: path, source: source });
     },
     doEndCapture() {
-      this.preventGestureCamera = true;
-      this.showFormulario();
-    },
-    showFormulario() {
-      this.showForm = true;
-      SpeakService.speak(Indications.COMPLETARFORMULARIO);
-    },
-    speak() {
-      SpeakService.speak("Coca cola, sabor original")
-        .then(() => console.log("funcionobien"))
-        .catch((err) => console.log(err));
-    },
-    doSave() {
-      HttpService.newProductoSingle(this.imagen)
-        .then(() => console.log("funcion"))
-        .catch((err) => console.log("se rompio todo"))
-        .finally(() => (this.imagenes = []));
+      this.$navigateTo(AddNewData, {
+        transition: {
+          name: "slideLeft",
+          duration: 200,
+          curve: "easeIn",
+        },
+        props: {
+          imagenes: this.imagenes,
+        },
+      });
     },
   },
 };
@@ -200,18 +175,5 @@ Button {
 }
 .roundedImage {
   border-radius: 100;
-}
-.formulario {
-  background-color: white;
-}
-.titulo {
-  color: #333333;
-  font-size: 16;
-  font-weight: 700;
-}
-.thumbnail{
-    background-color: aqua;
-    border-radius: 80
-    
 }
 </style>

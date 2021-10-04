@@ -1,40 +1,70 @@
 <template>
-  <AbsoluteLayout
-    width="150"
-    height="150"
-    backgroundColor="#ff66cc"
-    class="buttonBackground"
-  >
-    <label class="circle" :text="label" @tap="tap"></label>
+  <AbsoluteLayout :width="buttonWidth" :height="buttonHeight">
+    <Label :width="buttonWidth" :height="buttonHeight" class="circle" />
+    <Label
+      :top="buttonHeight / 2 / 2"
+      :text="label"
+      :width="buttonWidth"
+      :height="buttonHeight / 2"
+      class="texto"
+      @loaded="onLabelLoaded"
+    />
   </AbsoluteLayout>
 </template>
 <script>
+import { Label } from "@nativescript/core/ui/label";
+import { isAndroid } from "@nativescript/core/platform";
 export default {
   name: "ActionButton",
   props: {
     label: {
       default: "",
     },
+    buttonWidth: {
+      default: 120,
+    },
+    buttonHeight: {
+      default: 120,
+    },
   },
   methods: {
     doLoad() {
       this.checked = this.initialChecked;
     },
-    tap() {
-      this.$emit("tap");
+    onLabelLoaded(label) {
+      const lbl = label.object;
+      if (isAndroid) {
+        lbl.android.setGravity(17);
+      }
     },
   },
 };
 </script>
 <style scoped>
 .circle {
-  background: rgba(51, 217, 178, 1);
-  width: 150;
-  height: 150;
-  border-radius: 100;
+  background: rgb(255, 255, 255);
   text-align: center;
-  vertical-align: middle;
-  font-size: 5;
-  font-weight: 700;
+  animation-name: pulse;
+  animation-duration: 0.6s;
+  animation-iteration-count: infinite;
+  border-radius: 100;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(0.95); /* scaling to 0 */
+  }
+  50% {
+    transform: scale(1); /* increasing the size */
+  }
+  100% {
+    transform: scale(0.95); /* seeting back to initial size */
+  }
+}
+.texto {
+  text-align: center;
+  font-size: 15;
+  margin-left: 2;
+  margin-right: 2;
 }
 </style>

@@ -8,6 +8,7 @@
     "@nativescript/background-http": "^5.0.2",
     "@nativescript/core": "~8.1.1",
     "@nativescript/theme": "~3.0.1",
+    "@nstudio/nativescript-loading-indicator": "^4.1.0",
     "@yoonit/nativescript-camera": "^3.2.1",
     "nativescript-vue": "~2.9.0"
   },

@@ -23,7 +23,7 @@
           :roiBottomOffset="'10%'"
           :roiLeftOffset="'10%'"
           :imageCapture="enableImageCapture"
-          :imageCaptureAmount="4"
+          :imageCaptureAmount="6"
           :imageCaptureInterval="300"
           @imageCaptured="doImageCaptured"
           @endCapture="doEndCapture"
@@ -42,7 +42,11 @@
           </FlexboxLayout>
         </GridLayout>
       </GridLayout>
-      <GesturePanel @longPress="longPress" btnLabel="test" />
+      <GesturePanel
+        btnLabel="Escaneando objeto.."
+        @longPressStart="startCapture"
+        @longPressStop="stopCapture"
+      />
     </GridLayout>
   </Page>
 </template>
@@ -53,6 +57,7 @@ import GesturePanel from "~/components/GesturePanel.vue";
 import { HttpService } from "~/services/HttpService";
 import { SpeakService } from "~/services/SpeakService";
 import AddNewData from "~/components/AddNewData";
+import { Indications } from "~/services/locale/indications-es";
 
 export default {
   components: { ActionButton, GesturePanel },
@@ -70,7 +75,9 @@ export default {
     imagenes: [],
     imagen: null,
   }),
-  mounted() {},
+  mounted() {
+    SpeakService.speak(Indications.ADDNEWPRODUCTOINCIAR);
+  },
   methods: {
     async showThumbnailAsync() {
       this.showThumbnail = true;
@@ -86,9 +93,13 @@ export default {
         this.$yoo.camera.preview();
       }
     },
-    longPress() {
+    startCapture() {
       this.imagenes = [];
       this.$yoo.camera.startCapture("frame");
+    },
+    stopCapture() {
+      this.$yoo.camera.stopCapture();
+      this.doEndCapture();
     },
     doImageCaptured({
       type,
@@ -124,7 +135,7 @@ export default {
       this.$navigateTo(AddNewData, {
         transition: {
           name: "slideLeft",
-          duration: 300,
+          duration: 200,
           curve: "easeIn",
         },
         props: {

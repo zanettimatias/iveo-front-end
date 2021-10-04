@@ -12,5 +12,5 @@ import UploadFileTest from '@/components/UploadFileTest'
 
 
 new Vue({
-  render: (h) => h('frame', [h(AddNewCamera)]),
+  render: (h) => h('frame', [h(Home)]),
 }).$start()

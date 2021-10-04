@@ -1,8 +1,14 @@
 <template>
   <Page @loaded="onLoaded">
     <ActionBar title="iVEO" />
-    <GridLayout height="100%" width="100%" ref="all">
-      <StackLayout ref="form" class="formulario">
+    <GesturePanel
+      btnLabel="Escaneando objeto..."
+      @longPressStart="startCapture"
+      @longPressStop="stopCapture"
+      @longPress="doSave"
+      @swipe="swipe"
+    >
+      <StackLayout ref="form" class="formulario" height="100%" width="100%" >
         <Label
           :text="indicactions.COMPLETARFORMULARIO"
           textWrap="true"
@@ -11,18 +17,17 @@
           marginLeft="15"
           marginTop="15"
         />
-        <TextField v-model="marca" />
-        <Label :text="marca" style="text-align: center" />
-        <TextField :text="modelo" hint="Modelo" />
-        <TextField :text="material" hint="Material" />
-        <TextField :text="envase" hint="Envase" />
-        <TextField :text="contenido" hint="Contenido" />
-        <TextField :text="color" hint="Color, si aplica" />
+        <TextField v-model="marca" hint="Modelo" />
+        <TextField v-model="modelo" hint="Modelo" />
+        <TextField v-model="material" hint="Material" />
+        <TextField v-model="envase" hint="Envase" />
+        <TextField v-model="contenido" hint="Contenido" />
+        <TextField v-model="color" hint="Color, si aplica" />
         <TextField
-          :text="descripcion"
+          v-model="descripcion"
           hint="Complete una descripción que identifique al objeto"
         />
-        <WrapLayout>
+        <WrapLayout class="imagenesLayout">
           <Image
             v-for="image in imagenes"
             v-bind:key="image"
@@ -33,9 +38,8 @@
             height="100"
           />
         </WrapLayout>
-        <Button text="Confirmar Cambios" @tap="doSave" />
       </StackLayout>
-    </GridLayout>
+    </GesturePanel>
   </Page>
 </template>
 
@@ -44,6 +48,10 @@ import GesturePanel from "~/components/GesturePanel.vue";
 import { HttpService } from "~/services/HttpService";
 import { SpeakService } from "~/services/SpeakService";
 import { Indications } from "~/services/locale/indications-es";
+import AddNewCameraVue from "~/components/AddNewCamera.vue";
+import { LoadingIndicator } from "@nstudio/nativescript-loading-indicator";
+
+const indicator = new LoadingIndicator();
 
 export default {
   name: "AddNewData",
@@ -68,30 +76,62 @@ export default {
   },
   methods: {
     doSave() {
-      console.log(this.marca);
-      HttpService.newProductoTestMulti(this.dataFactory(), this.imagenes)
+      indicator.show({ message: "Subiendo archivos", dimBackground: true });
+      SpeakService.speak(Indications.ADDNEWPRODUCTOPROGRESS);
+      HttpService.newProductoTestMulti(this.multiPartFileFactory())
         .then((e) => {
-          console.log("OK");
+          indicator.hide();
+          SpeakService.speak(Indications.ADDNEWPRODUCTOSUCESS);
+          this.back();
         })
         .catch((err) => {
+          indicator.hide();
+          SpeakService.speak(Indications.ADDNEWPRODUCTOERROR);
           console.log(err);
         });
     },
-    dataFactory() {
-      console.log(this.marca);
+    multiPartFileFactory() {
+      let multipartFiles = [];
+      multipartFiles.push(...this.formDataFactory());
+      multipartFiles.push(...this.filesFactory());
+      return multipartFiles;
+    },
+    filesFactory() {
+      let files = [];
+      this.imagenes.forEach((element) => {
+        files.push({
+          name: "files",
+          filename: element.path,
+          mimeType: "image/jpeg",
+        });
+      });
+      return files;
+    },
+    formDataFactory() {
       let data = [];
-      if (!this.marca) data.push({ name: "marca", value: this.marca });
-      if (!this.material) data.push({ name: "material", value: this.material });
-      if (!this.envase) data.push({ name: "envase", value: this.envase });
-      if (!this.descripcion)
+      if (this.marca) data.push({ name: "marca", value: this.marca });
+      if (this.material) data.push({ name: "material", value: this.material });
+      if (this.envase) data.push({ name: "envase", value: this.envase });
+      if (this.descripcion)
         data.push({ name: "descripcion", value: this.descripcion });
-      if (!this.color) data.push({ name: "color", value: this.color });
-      if (!this.contenido)
+      if (this.color) data.push({ name: "color", value: this.color });
+      if (this.contenido)
         data.push({ name: "contenido", value: this.contenido });
-      if (!this.modelo) data.push({ name: "modelo", value: this.modelo });
-
+      if (this.modelo) data.push({ name: "modelo", value: this.modelo });
       return data;
     },
+    swipe(event) {
+      if (event.direction == "1") this.back();
+    },
+    back() {
+      this.$navigateTo(AddNewCameraVue, {
+        transition: {
+          name: "slideRight",
+          duration: 200,
+          curve: "easeIn",
+        },
+      });
+    }
   },
 };
 </script>
@@ -136,5 +176,9 @@ Button {
 .thumbnail {
   background-color: aqua;
   border-radius: 80;
+}
+.imagenesLayout {
+  margin-top: 15;
+  margin-left: 15;
 }
 </style>

@@ -16,6 +16,7 @@
 
 <script>
 import Match from "~/components/Match";
+import AddNewCamera from "~/components/AddNewCamera";
 export default {
   computed: {
     message() {
@@ -26,6 +27,14 @@ export default {
     swipe(event) {
       if (event.direction == "2")
         this.$navigateTo(Match, {
+          transition: {
+            name: "slideLeft",
+            duration: 200,
+            curve: "easeIn",
+          },
+        });
+      if (event.direction == "4")
+        this.$navigateTo(AddNewCamera, {
           transition: {
             name: "slideLeft",
             duration: 200,

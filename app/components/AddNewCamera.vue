@@ -46,6 +46,7 @@
         btnLabel="Escaneando objeto.."
         @longPressStart="startCapture"
         @longPressStop="stopCapture"
+        @swipeRight="swipeRight"
       />
     </GridLayout>
   </Page>
@@ -76,7 +77,9 @@ export default {
     imagen: null,
   }),
   mounted() {
-    SpeakService.speak(Indications.ADDNEWPRODUCTOINCIAR);
+    SpeakService.speak(Indications.ADDNEWPRODUCTOINCIAR).then(() => {
+      SpeakService.speak(Indications.BACKMESSAGE);
+    });
   },
   methods: {
     async showThumbnailAsync() {
@@ -140,6 +143,15 @@ export default {
         },
         props: {
           imagenes: this.imagenes,
+        },
+      });
+    },
+    swipeRight() {
+      this.$navigateTo(Home, {
+        transition: {
+          name: "slideRight",
+          duration: 200,
+          curve: "easeIn",
         },
       });
     },

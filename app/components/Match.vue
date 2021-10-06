@@ -44,7 +44,9 @@
       </GridLayout>
       <GesturePanel
         btnLabel="Escaneando objeto.."
-        @longPressStop="startCapture"
+        @longPress="startCapture"
+        @swipeRight="swipeRight"
+        @doubleTap="doubleTap"
       />
     </GridLayout>
   </Page>
@@ -58,6 +60,8 @@ import { SpeakService } from "~/services/SpeakService";
 import AddNewData from "~/components/AddNewData";
 import { Indications } from "~/services/locale/indications-es";
 import { LoadingIndicator } from "@nstudio/nativescript-loading-indicator";
+import Home from "@/components/Home";
+import personality from "~/services/Personality";
 
 const indicator = new LoadingIndicator();
 
@@ -134,22 +138,21 @@ export default {
       this.imagenes.push({ path: path, source: source });
     },
     doEndCapture() {
-      indicator.show({
-        message: Indications.MATCHPROGRESS,
-        dimBackground: true,
+      SpeakService.speak(Indications.MATCHPROGRESS).then(() => {
+        HttpService.match(this.multiPartFileFactory())
+          .then((e) => {
+            if (e.data !== "[]") {
+              let data = JSON.parse(e.data);
+              SpeakService.speak(personality.getFrase(data[0]));
+            } else {
+              SpeakService.speak(Indications.MATCHFAILED);
+            }
+          })
+          .catch((err) => {
+            SpeakService.speak(Indications.ADDNEWPRODUCTOERROR);
+            console.log(err);
+          });
       });
-      SpeakService.speak(Indications.MATCHPROGRESS);
-      HttpService.match(this.multiPartFileFactory())
-        .then((e) => {
-          indicator.hide();
-          SpeakService.speak(Indications.ADDNEWPRODUCTOSUCESS);
-          this.back();
-        })
-        .catch((err) => {
-          indicator.hide();
-          SpeakService.speak(Indications.ADDNEWPRODUCTOERROR);
-          console.log(err);
-        });
     },
     multiPartFileFactory() {
       let multipartFiles = [];
@@ -166,6 +169,15 @@ export default {
         });
       });
       return files;
+    },
+    swipeRight() {
+      this.$navigateTo(Home, {
+        transition: {
+          name: "slideRight",
+          duration: 200,
+          curve: "easeIn",
+        },
+      });
     },
   },
 };

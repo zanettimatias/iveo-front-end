@@ -7,6 +7,7 @@
     height="100%"
     width="100%"
     @swipe="swipe"
+    @doubleTap="doubleTap"
   >
     <slot />
     <ActionButton
@@ -67,10 +68,16 @@ export default {
       this.buttonTop = y;
     },
     swipe(event) {
-      this.$emit("swipe", event);
+      if (event.direction == "2") this.$emit("swipeLeft", event);
+      if (event.direction == "1") this.$emit("swipeRight", event);
+      if (event.direction == "4") this.$emit("swipeTop", event);
+      if (event.direction == "8") this.$emit("swipeBottom", event);
     },
     longPress() {
       this.$emit("longPress");
+    },
+    doubleTap() {
+      this.$emit("doubleTap");
     },
   },
 };

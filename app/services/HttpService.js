@@ -1,7 +1,8 @@
 const bghttp = require("@nativescript/background-http");
 const session = bghttp.session("image-upload");
+import { Http } from '@nativescript/core'
 
-const serverPath = "http://10.0.2.2:8080"
+const serverPath = "http://192.168.0.53:8080"
 
 export class HttpService {
     static match(multiPartFiles) {
@@ -18,7 +19,7 @@ export class HttpService {
             task = session.multipartUpload(multiPartFiles, request);
             task.on("progress", (e) => {
                 // console log data
-                console.log(`uploading... ${e.currentBytes} / ${e.totalBytes}`);
+                //console.log(`uploading... ${e.currentBytes} / ${e.totalBytes}`);
             });
 
             task.on("error", (e) => {
@@ -29,17 +30,15 @@ export class HttpService {
 
             task.on("responded", (e) => {
                 // console log data
-                console.log(`received ${e.responseCode} code. Server sent: ${e.data}`);
+                //console.log(`received ${e.responseCode} code. Server sent: ${e.data}`);
                 // var uploaded_response = JSON.parse(e.data);
-
-                resolve(task);
+                resolve(e);
             });
 
             task.on("complete", (e) => {
                 // console log data
                 console.log(`upload complete!`);
                 console.log(`received ${e.responseCode} code`);
-                // console.log(e.data);
             });
 
         });
@@ -69,10 +68,9 @@ export class HttpService {
 
             task.on("responded", (e) => {
                 // console log data
-                console.log(`received ${e.responseCode} code. Server sent: ${e.data}`);
+                console.log(`received ${e.responseCode} code. Server sent: ${e}`);
                 // var uploaded_response = JSON.parse(e.data);
-
-                resolve(task);
+                resolve(e);
             });
 
             task.on("complete", (e) => {
@@ -80,8 +78,33 @@ export class HttpService {
                 console.log(`upload complete!`);
                 console.log(`received ${e.responseCode} code`);
                 // console.log(e.data);
+                // resolve(task);
             });
 
         });
     }
+    static login(username, password) {
+        return Http.request({
+            url: serverPath + "/login",
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            content: JSON.stringify({
+                username: username,
+                password: password
+            })
+        });
+    }
+    static signUp(username, password, email) {
+        return Http.request({
+            url: serverPath + "/signup",
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            content: JSON.stringify({
+                username: username,
+                password: password,
+                email: email
+            })
+        });
+    }
+
 }

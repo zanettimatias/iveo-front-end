@@ -6,9 +6,9 @@
       @longPressStart="startCapture"
       @longPressStop="stopCapture"
       @longPress="doSave"
-      @swipe="swipe"
+      @swipeRight="swipeRight"
     >
-      <StackLayout ref="form" class="formulario" height="100%" width="100%" >
+      <StackLayout ref="form" class="formulario" height="100%" width="100%">
         <Label
           :text="indicactions.COMPLETARFORMULARIO"
           textWrap="true"
@@ -17,6 +17,7 @@
           marginLeft="15"
           marginTop="15"
         />
+        <TextField v-model="tipo" hint="Tipo de objeto o producto" />
         <TextField v-model="marca" hint="Modelo" />
         <TextField v-model="modelo" hint="Modelo" />
         <TextField v-model="material" hint="Material" />
@@ -61,6 +62,7 @@ export default {
   },
   data() {
     return {
+      tipo: "",
       marca: "",
       material: "",
       envase: "",
@@ -76,7 +78,10 @@ export default {
   },
   methods: {
     doSave() {
-      indicator.show({ message: Indications.ADDNEWPRODUCTOPROGRESS, dimBackground: true });
+      indicator.show({
+        message: Indications.ADDNEWPRODUCTOPROGRESS,
+        dimBackground: true,
+      });
       SpeakService.speak(Indications.ADDNEWPRODUCTOPROGRESS);
       HttpService.newProductoTestMulti(this.multiPartFileFactory())
         .then((e) => {
@@ -109,6 +114,7 @@ export default {
     },
     formDataFactory() {
       let data = [];
+      if (this.tipo) data.push({ name: "tipo", value: this.tipo });
       if (this.marca) data.push({ name: "marca", value: this.marca });
       if (this.material) data.push({ name: "material", value: this.material });
       if (this.envase) data.push({ name: "envase", value: this.envase });
@@ -120,8 +126,8 @@ export default {
       if (this.modelo) data.push({ name: "modelo", value: this.modelo });
       return data;
     },
-    swipe(event) {
-      if (event.direction == "1") this.back();
+    swipeRight(event) {
+      this.back();
     },
     back() {
       this.$navigateTo(AddNewCameraVue, {
@@ -131,7 +137,7 @@ export default {
           curve: "easeIn",
         },
       });
-    }
+    },
   },
 };
 </script>

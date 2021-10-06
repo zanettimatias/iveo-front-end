@@ -76,11 +76,6 @@ export default {
     imagenes: [],
     imagen: null,
   }),
-  mounted() {
-    SpeakService.speak(Indications.ADDNEWPRODUCTOINCIAR).then(() => {
-      SpeakService.speak(Indications.BACKMESSAGE);
-    });
-  },
   methods: {
     async showThumbnailAsync() {
       this.showThumbnail = true;
@@ -94,6 +89,9 @@ export default {
       if (await this.$yoo.camera.requestPermission()) {
         console.log("[YooCamera] Permission granted, start preview");
         this.$yoo.camera.preview();
+        SpeakService.speak(Indications.ADDNEWPRODUCTOINCIAR).then(() => {
+          SpeakService.speak(Indications.BACKMESSAGE);
+        });
       }
     },
     startCapture() {

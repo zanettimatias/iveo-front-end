@@ -1,10 +1,11 @@
 <template>
-  <Page>
+  <Page @loaded="onLoaded">
     <ActionBar title="iVEO" />
     <GesturePanel
-      btnLabel="aadfafd"
+      btnLabel="Presionar"
       @swipeTop="swipeTop"
       @swipeLeft="swipeLeft"
+      :showButton="false"
     >
       <FlexboxLayout
         flexDirection="column"
@@ -67,7 +68,8 @@ import { Indications } from "~/services/locale/indications-es";
 import GesturePanel from "~/components/GesturePanel.vue";
 import { HttpService } from "~/services/HttpService";
 import SignUp from "~/components/SignUp";
-
+import { LoadingIndicator } from "@nstudio/nativescript-loading-indicator";
+const indicator = new LoadingIndicator();
 export default {
   data() {
     return {
@@ -114,15 +116,28 @@ export default {
       });
     },
     onButtonTap() {
+      SpeakService.speak(Indications.SIGNINROCESS);
+      indicator.show({
+        message: Indications.SIGNINROCESS,
+        dimBackground: true,
+      });
       HttpService.login(this.usernameInput, this.passwordInput)
-        .then((e) => {
-          if (response.status == 400) {
+        .then((response) => {
+          if (response.statusCode == 404) {
             SpeakService.speak(Indications.ERRORBADREQUEST);
+            indicator.hide();
           }
-          if (response.status == 401) {
+          if (response.statusCode == 400) {
+            SpeakService.speak(Indications.ERRORBADREQUEST);
+            indicator.hide();
+          }
+          if (response.statusCode == 401) {
             SpeakService.speak(Indications.ERRORLOGIN);
+            indicator.hide();
           }
-          if (response.status == 200) {
+          if (response.statusCode == 200) {
+            this.$store.user = response.content.toJSON();
+            indicator.hide();
             this.goHome();
           }
         })

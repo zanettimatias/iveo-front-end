@@ -1,6 +1,7 @@
 const bghttp = require("@nativescript/background-http");
 const session = bghttp.session("image-upload");
 import { Http } from '@nativescript/core'
+import authHeader from '@/utils/AuthHeader';
 
 const serverPath = "http://192.168.0.53:8080"
 
@@ -43,14 +44,15 @@ export class HttpService {
 
         });
     }
-    static newProductoTestMulti(multiPartFiles) {
+    static newProductoTestMulti(multiPartFiles, user) {
         return new Promise((resolve, reject) => {
             let task = null;
             let request = {
                 url: serverPath + "/producto/new",
                 method: "POST",
                 headers: {
-                    "Content-Type": "application/octet-stream"
+                    "Content-Type": "application/octet-stream",
+                    "Authorization": authHeader(user)
                 },
                 description: "Subiendo archivos a "
             };
@@ -63,7 +65,7 @@ export class HttpService {
             task.on("error", (e) => {
                 // console log data
                 console.log(`Error processing upload ${e.responseCode} code.`);
-                reject(`Error uploading image!`);
+                reject(e.responseCode);
             });
 
             task.on("responded", (e) => {

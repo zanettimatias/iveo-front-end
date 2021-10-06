@@ -11,6 +11,7 @@
   >
     <slot />
     <ActionButton
+      v-if="showButton"
       :label="btnLabel"
       :top="buttonTop"
       :left="buttonLeft"
@@ -34,8 +35,8 @@ export default {
     return {
       buttonTop: 0,
       buttonLeft: 0,
-      buttonHeight: 180,
-      buttonWidth: 180,
+      buttonHeight: 120,
+      buttonWidth: 120,
       mostrarBoton: false,
     };
   },
@@ -44,8 +45,8 @@ export default {
     btnLabel: {
       default: "",
     },
-    prevented: {
-      default: false,
+    showButton: {
+      default: true,
     },
   },
   methods: {

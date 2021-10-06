@@ -7,6 +7,7 @@
       @longPressStop="stopCapture"
       @longPress="doSave"
       @swipeRight="swipeRight"
+      :showButton="false"
     >
       <StackLayout ref="form" class="formulario" height="100%" width="100%">
         <Label
@@ -18,7 +19,7 @@
           marginTop="15"
         />
         <TextField v-model="tipo" hint="Tipo de objeto o producto" />
-        <TextField v-model="marca" hint="Modelo" />
+        <TextField v-model="marca" hint="Marca" />
         <TextField v-model="modelo" hint="Modelo" />
         <TextField v-model="material" hint="Material" />
         <TextField v-model="envase" hint="Envase" />
@@ -51,6 +52,8 @@ import { SpeakService } from "~/services/SpeakService";
 import { Indications } from "~/services/locale/indications-es";
 import AddNewCameraVue from "~/components/AddNewCamera.vue";
 import { LoadingIndicator } from "@nstudio/nativescript-loading-indicator";
+import Home from "~/components/Home.vue";
+import SigIn from "~/components/SignIn.vue";
 
 const indicator = new LoadingIndicator();
 
@@ -73,26 +76,38 @@ export default {
       indicactions: Indications,
     };
   },
-  mounted() {
-    SpeakService.speak(Indications.COMPLETARFORMULARIO);
-  },
   methods: {
+    onLoaded() {
+      SpeakService.speak(Indications.COMPLETARFORMULARIO);
+    },
     doSave() {
+      if (this.tipo == "") {
+        SpeakService.speak("Debe completar al menos el campo tipo de objeto.");
+        return;
+      }
       indicator.show({
         message: Indications.ADDNEWPRODUCTOPROGRESS,
         dimBackground: true,
       });
       SpeakService.speak(Indications.ADDNEWPRODUCTOPROGRESS);
-      HttpService.newProductoTestMulti(this.multiPartFileFactory())
+      HttpService.newProductoTestMulti(
+        this.multiPartFileFactory(),
+        this.$store.user
+      )
         .then((e) => {
           indicator.hide();
-          SpeakService.speak(Indications.ADDNEWPRODUCTOSUCESS);
-          this.back();
+          this.goHome();
         })
         .catch((err) => {
-          indicator.hide();
-          SpeakService.speak(Indications.ADDNEWPRODUCTOERROR);
-          console.log(err);
+          if (err == 403) {
+            SpeakService.speak(Indications.ADDNEWPRODUCTOSINATURRIZACION);
+            indicator.hide();
+            this.goSign();
+          }
+          if (err == 400) {
+            SpeakService.speak(Indications.ERRORBADREQUEST);
+            indicator.hide();
+          }
         });
     },
     multiPartFileFactory() {
@@ -133,6 +148,24 @@ export default {
       this.$navigateTo(AddNewCameraVue, {
         transition: {
           name: "slideRight",
+          duration: 200,
+          curve: "easeIn",
+        },
+      });
+    },
+    goHome() {
+      this.$navigateTo(Home, {
+        transition: {
+          name: "slideLeft",
+          duration: 200,
+          curve: "easeIn",
+        },
+      });
+    },
+    goSign() {
+      this.$navigateTo(SigIn, {
+        transition: {
+          name: "slideLeft",
           duration: 200,
           curve: "easeIn",
         },

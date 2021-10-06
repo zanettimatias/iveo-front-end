@@ -1,7 +1,7 @@
 <template>
   <Page>
     <ActionBar title="iVEO" />
-    <GesturePanel btnLabel="aadfafd" @swipeBottom="swipeBottom">
+    <GesturePanel btnLabel="" @swipeBottom="swipeBottom" :showButton="false">
       <FlexboxLayout
         flexDirection="column"
         justifyContent="center"
@@ -71,6 +71,8 @@ import { Indications } from "~/services/locale/indications-es";
 import GesturePanel from "~/components/GesturePanel.vue";
 import { HttpService } from "~/services/HttpService";
 import SigIn from "~/components/SignIn.vue";
+import { LoadingIndicator } from "@nstudio/nativescript-loading-indicator";
+const indicator = new LoadingIndicator();
 export default {
   data() {
     return {
@@ -103,24 +105,38 @@ export default {
       });
     },
     onButtonTap() {
+      indicator.show({
+        message: Indications.SIGNUPROCESS,
+        dimBackground: true,
+      });
       HttpService.signUp(
         this.usernameInput,
         this.passwordInput,
         this.emailInput
       )
-        .then((e) => {
-          if (response.status == 400) {
+        .then((response) => {
+          if (response.statusCode == 404) {
             SpeakService.speak(Indications.ERRORBADREQUEST);
+            indicator.hide();
           }
-          if (response.status == 401) {
+          if (response.statusCode == 400) {
             SpeakService.speak(Indications.ERRORBADREQUEST);
+            indicator.hide();
           }
-          if (response.status == 200) {
-            this.goSignIn();
+          if (response.statusCode == 401) {
+            SpeakService.speak(Indications.ERRORBADREQUEST);
+            indicator.hide();
+          }
+          if (response.statusCode == 200) {
+            SpeakService.speak(Indications.SIGNUPSUCESS).then(() => {
+              indicator.hide();
+              this.goSignIn();
+            });
           }
         })
         .catch(() => {
           SpeakService.speak(Indications.ERRORLOGIN);
+          indicator.hide();
         });
     },
   },

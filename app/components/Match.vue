@@ -62,6 +62,7 @@ import { Indications } from "~/services/locale/indications-es";
 import { LoadingIndicator } from "@nstudio/nativescript-loading-indicator";
 import Home from "@/components/Home";
 import personality from "~/services/Personality";
+import SignIn from "~/components/SignIn.vue"
 
 const indicator = new LoadingIndicator();
 
@@ -81,9 +82,7 @@ export default {
     imagenes: [],
     imagen: null,
   }),
-  mounted() {
-    SpeakService.speak(Indications.MATCHINICIAR);
-  },
+  mounted() {},
   methods: {
     async showThumbnailAsync() {
       this.showThumbnail = true;
@@ -97,6 +96,7 @@ export default {
       if (await this.$yoo.camera.requestPermission()) {
         console.log("[YooCamera] Permission granted, start preview");
         this.$yoo.camera.preview();
+        SpeakService.speak(Indications.MATCHINICIAR);
       }
     },
     startCapture() {
@@ -171,13 +171,23 @@ export default {
       return files;
     },
     swipeRight() {
-      this.$navigateTo(Home, {
-        transition: {
-          name: "slideRight",
-          duration: 200,
-          curve: "easeIn",
-        },
-      });
+      if (this.$store.user == null) {
+        this.$navigateTo(SignIn, {
+          transition: {
+            name: "slideRight",
+            duration: 200,
+            curve: "easeIn",
+          },
+        });
+      } else {
+        this.$navigateTo(Home, {
+          transition: {
+            name: "slideRight",
+            duration: 200,
+            curve: "easeIn",
+          },
+        });
+      }
     },
   },
 };

@@ -174,6 +174,10 @@ ActionBar {
   background-color: #000000;
   color: #ffffff;
 }
+TextField {
+  color: white;
+  placeholder-color: white;
+}
 label {
   font-size: 14;
   color: #ffffff;

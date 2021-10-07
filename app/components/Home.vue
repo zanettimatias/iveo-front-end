@@ -1,27 +1,18 @@
 <template>
   <Page @loaded="onLoaded">
     <ActionBar title="iVEO" />
-    <GesturePanel
-      btnLabel="Escaneando objeto..."
-      @swipeTop="swipeTop"
-      @swipeLeft="swipeLeft"
+
+    <FlexboxLayout
+      flexDirection="column"
+      @swipe="swipe"
+      justifyContent="center"
+      class="full"
     >
-      <FlexboxLayout
-        flexDirection="column"
-        justifyContent="center"
-        class="full"
-      >
-        <Image src="~/images/nsvue_logo.png" class="logo-container" />
-        <Label class="info">
-          <FormattedString>
-            <Span text="i" class="i" />
-            <Span text="V" class="v" />
-            <Span text="E" class="e" />
-            <Span text="O" class="o" />
-          </FormattedString>
-        </Label>
-      </FlexboxLayout>
-    </GesturePanel>
+      <StackLayout justifyContent="center" class="logo-container">
+        <Icon />
+      </StackLayout>
+      <Label text="" />
+    </FlexboxLayout>
   </Page>
 </template>
 
@@ -31,23 +22,29 @@ import AddNewCamera from "~/components/AddNewCamera";
 import { SpeakService } from "~/services/SpeakService";
 import { Indications } from "~/services/locale/indications-es";
 import GesturePanel from "~/components/GesturePanel.vue";
+import Icon from "~/components/Icon";
 export default {
   components: {
-    GesturePanel
+    GesturePanel,
+    Icon,
   },
   computed: {
     message() {
       return "iVEO";
-    }
+    },
   },
   methods: {
+    swipe(event) {
+      if (event.direction == "2") this.swipeLeft(event);
+      if (event.direction == "4") this.swipeTop(event);
+    },
     swipeTop(event) {
       this.$navigateTo(AddNewCamera, {
         transition: {
           name: "slideTop",
           duration: 200,
-          curve: "easeIn"
-        }
+          curve: "easeIn",
+        },
       });
     },
     swipeLeft(event) {
@@ -55,16 +52,16 @@ export default {
         transition: {
           name: "slideLeft",
           duration: 200,
-          curve: "easeIn"
-        }
+          curve: "easeIn",
+        },
       });
     },
     onLoaded() {
       SpeakService.speak(Indications.BIENVENIDO).then(() => {
         SpeakService.speak(Indications.HOMEGESTURES);
       });
-    }
-  }
+    },
+  },
 };
 </script>
 
@@ -144,5 +141,15 @@ ActionBar {
 .container {
   margin-left: 34;
   margin-right: 34;
+  background-color: black;
+}
+.label {
+  color: white;
+  font-size: 20;
+}
+.full {
+  height: 100%;
+  width: 100%;
+  background-color: black;
 }
 </style>

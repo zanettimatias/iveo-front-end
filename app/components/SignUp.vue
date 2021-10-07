@@ -1,77 +1,75 @@
 <template>
   <Page>
     <ActionBar title="iVEO" />
-    <GesturePanel btnLabel="" @swipeBottom="swipeBottom" :showButton="false">
-      <FlexboxLayout
-        flexDirection="column"
-        justifyContent="center"
-        class="full"
-      >
-        <Image src="~/images/nsvue_logo.png" class="logo-container" />
+    <FlexboxLayout
+      flexDirection="column"
+      @swipe="swipe"
+      justifyContent="center"
+      class="full"
+    >
+      <StackLayout justifyContent="center" class="logo-container">
+        <Icon />
+      </StackLayout>
+      <StackLayout class="container">
+        <FlexboxLayout alignItems="center" class="border-bottom">
+          <Image
+            src="~/images/icon_user.png"
+            width="16"
+            height="16"
+            class="icon-margin"
+          />
+          <TextField
+            v-model="usernameInput"
+            hint="Usuario"
+            class="form-input"
+          />
+        </FlexboxLayout>
+        <FlexboxLayout alignItems="center" class="border-bottom">
+          <Image
+            src="~/images/icon_user.png"
+            width="16"
+            height="16"
+            class="icon-margin"
+          />
+          <TextField v-model="emailInput" hint="Email" class="form-input" />
+        </FlexboxLayout>
 
-        <StackLayout class="container">
-          <FlexboxLayout alignItems="center" class="border-bottom">
-            <Image
-              src="~/images/icon_user.png"
-              width="16"
-              height="16"
-              class="icon-margin"
-            />
-            <TextField
-              v-model="usernameInput"
-              hint="usuario"
-              class="form-input"
-            />
-          </FlexboxLayout>
-          <FlexboxLayout alignItems="center" class="border-bottom">
-            <Image
-              src="~/images/icon_user.png"
-              width="16"
-              height="16"
-              class="icon-margin"
-            />
-            <TextField v-model="emailInput" hint="Email" class="form-input" />
-          </FlexboxLayout>
+        <FlexboxLayout alignItems="center" class="border-bottom">
+          <Image
+            src="~/images/icon_lock.png"
+            width="16"
+            height="16"
+            class="icon-margin"
+          />
+          <TextField
+            v-model="passwordInput"
+            hint="Contraseña"
+            secure="true"
+            class="form-input"
+          />
+        </FlexboxLayout>
 
-          <FlexboxLayout alignItems="center" class="border-bottom">
-            <Image
-              src="~/images/icon_lock.png"
-              width="16"
-              height="16"
-              class="icon-margin"
-            />
-            <TextField
-              v-model="passwordInput"
-              hint="Contraseña"
-              secure="true"
-              class="form-input"
-            />
-          </FlexboxLayout>
+        <Button text="Crear cuenta" @tap="onButtonTap" class="my-button" />
 
-          <Button text="Crear cuenta" @tap="onButtonTap" class="my-button" />
-
-          <FlexboxLayout
-            alignItems="center"
-            justifyContent="space-between"
-            class="auth-buttons"
-          >
-          </FlexboxLayout>
-        </StackLayout>
-      </FlexboxLayout>
-    </GesturePanel>
+        <FlexboxLayout
+          alignItems="center"
+          justifyContent="space-between"
+          class="auth-buttons"
+        >
+        </FlexboxLayout>
+      </StackLayout>
+    </FlexboxLayout>
   </Page>
 </template>
 
 <script>
-import Match from "~/components/Match";
-import AddNewCamera from "~/components/AddNewCamera";
-import Home from "~/components/Home";
 import { SpeakService } from "~/services/SpeakService";
 import { Indications } from "~/services/locale/indications-es";
 import GesturePanel from "~/components/GesturePanel.vue";
 import { HttpService } from "~/services/HttpService";
 import SigIn from "~/components/SignIn.vue";
 import { LoadingIndicator } from "@nstudio/nativescript-loading-indicator";
+import Icon from "~/components/Icon.vue";
 const indicator = new LoadingIndicator();
 export default {
   data() {
@@ -85,6 +83,7 @@ export default {
   mounted() {},
   components: {
     GesturePanel,
+    Icon,
   },
   computed: {
     message() {
@@ -92,13 +91,16 @@ export default {
     },
   },
   methods: {
-    swipeBottom(event) {
+    swipe(event) {
+      if (event.direction == "2") this.swipeLeft(event);
+    },
+    swipeLeft(event) {
       this.goSignIn();
     },
     goSignIn() {
       this.$navigateTo(SigIn, {
         transition: {
-          name: "slideBottom",
+          name: "slideLeft",
           duration: 200,
           curve: "easeIn",
         },
@@ -186,7 +188,6 @@ ActionBar {
   background-color: black;
 }
 .logo-container {
-  width: 150;
   margin-bottom: 60;
 }
 .container {

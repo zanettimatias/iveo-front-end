@@ -1,12 +1,7 @@
 <template>
   <Page @loaded="onLoaded">
     <ActionBar title="iVEO" />
-    <FlexboxLayout
-      flexDirection="column"
-      @swipe="swipe"
-      justifyContent="center"
-      class="full"
-    >
+    <FlexboxLayout flexDirection="column" @swipe="swipe" justifyContent="center" class="full">
       <StackLayout justifyContent="center" class="logo-container">
         <Icon />
       </StackLayout>
@@ -19,35 +14,19 @@
             class="icon-margin"
           />
           <TextField
-            v-model="usernameInput"
-            hint="Usuario"
+            v-model="email"
+            hint="Email"
             class="form-input"
           />
         </FlexboxLayout>
 
-        <FlexboxLayout alignItems="center" class="border-bottom">
-          <Image
-            src="~/images/icon_lock.png"
-            width="16"
-            height="16"
-            class="icon-margin"
-          />
-          <TextField
-            v-model="passwordInput"
-            hint="Contraseña"
-            secure="true"
-            class="form-input"
-          />
-        </FlexboxLayout>
-
-        <Button text="Entrar" @tap="onButtonTap" class="my-button" />
+        <Button text="Recuperar contraseña" @tap="onButtonTap" class="my-button" />
 
         <FlexboxLayout
           alignItems="center"
           justifyContent="center"
           class="auth-buttons"
         >
-          <Label horizontalAlignment="right" text="Recuperar contraseña" />
         </FlexboxLayout>
       </StackLayout>
     </FlexboxLayout>
@@ -55,23 +34,18 @@
 </template>
 
 <script>
-import Match from "~/components/Match";
-import Home from "~/components/Home";
 import { SpeakService } from "~/services/SpeakService";
 import { Indications } from "~/services/locale/indications-es";
 import GesturePanel from "~/components/GesturePanel.vue";
 import { HttpService } from "~/services/HttpService";
-import SignUp from "~/components/SignUp";
+import SignIn from "~/components/SignIn.vue";
 import { LoadingIndicator } from "@nstudio/nativescript-loading-indicator";
 const indicator = new LoadingIndicator();
 import Icon from "~/components/Icon";
-import PasswordRecovery from "~/components/PasswordRecovery"
 export default {
   data() {
     return {
-      usernameInput: "",
-      passwordInput: "",
-      hidePassword: false,
+      email: ""
     };
   },
   mounted() {},
@@ -86,41 +60,12 @@ export default {
   },
   methods: {
     swipe(event) {
-      if (event.direction == "2") this.swipeLeft(event);
-      if (event.direction == "1") this.swipeRight(event);
-      if (event.direction == "4") this.swipeTop(event);
+      if (event.direction == "8") this.swipeBottom(event);
     },
-    swipeRight(event) {
-      this.$navigateTo(SignUp, {
+    swipeBottom(event) {
+      this.$navigateTo(SignIn, {
         transition: {
           name: "slideRight",
-          duration: 200,
-          curve: "easeIn",
-        },
-      });
-    },
-    swipeLeft(event) {
-      this.$navigateTo(Match, {
-        transition: {
-          name: "slideLeft",
-          duration: 200,
-          curve: "easeIn",
-        },
-      });
-    },
-    swipeTop(event) {
-      this.$navigateTo(PasswordRecovery, {
-        transition: {
-          name: "slideTop",
-          duration: 200,
-          curve: "easeIn",
-        },
-      });
-    },
-    goHome() {
-      this.$navigateTo(Home, {
-        transition: {
-          name: "slideLeft",
           duration: 200,
           curve: "easeIn",
         },

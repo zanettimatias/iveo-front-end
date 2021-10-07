@@ -14,7 +14,6 @@
         <Image src="~/images/nsvue_logo.png" class="logo-container" />
         <Label class="info">
           <FormattedString>
-            <Span class="fas" text.decode="&#xf5f0; " />
             <Span text="i" class="i" />
             <Span text="V" class="v" />
             <Span text="E" class="e" />
@@ -34,12 +33,12 @@ import { Indications } from "~/services/locale/indications-es";
 import GesturePanel from "~/components/GesturePanel.vue";
 export default {
   components: {
-    GesturePanel,
+    GesturePanel
   },
   computed: {
     message() {
       return "iVEO";
-    },
+    }
   },
   methods: {
     swipeTop(event) {
@@ -47,8 +46,8 @@ export default {
         transition: {
           name: "slideTop",
           duration: 200,
-          curve: "easeIn",
-        },
+          curve: "easeIn"
+        }
       });
     },
     swipeLeft(event) {
@@ -56,16 +55,16 @@ export default {
         transition: {
           name: "slideLeft",
           duration: 200,
-          curve: "easeIn",
-        },
+          curve: "easeIn"
+        }
       });
     },
     onLoaded() {
       SpeakService.speak(Indications.BIENVENIDO).then(() => {
         SpeakService.speak(Indications.HOMEGESTURES);
       });
-    },
-  },
+    }
+  }
 };
 </script>
 

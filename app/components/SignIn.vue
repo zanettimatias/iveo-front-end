@@ -1,62 +1,52 @@
 <template>
   <Page @loaded="onLoaded">
     <ActionBar title="iVEO" />
-    <GesturePanel
-      btnLabel="Presionar"
-      @swipeTop="swipeTop"
-      @swipeLeft="swipeLeft"
-      :showButton="false"
-    >
-      <FlexboxLayout
-        flexDirection="column"
-        justifyContent="center"
-        class="full"
-      >
-        <Image src="~/images/nsvue_logo.png" class="logo-container" />
 
-        <StackLayout class="container">
-          <FlexboxLayout alignItems="center" class="border-bottom">
-            <Image
-              src="~/images/icon_user.png"
-              width="16"
-              height="16"
-              class="icon-margin"
-            />
-            <TextField
-              v-model="usernameInput"
-              hint="Usuario"
-              class="form-input"
-            />
-          </FlexboxLayout>
+    <FlexboxLayout flexDirection="column" justifyContent="center" class="full">
+      <Image src="~/images/nsvue_logo.png" class="logo-container" />
 
-          <FlexboxLayout alignItems="center" class="border-bottom">
-            <Image
-              src="~/images/icon_lock.png"
-              width="16"
-              height="16"
-              class="icon-margin"
-            />
-            <TextField
-              v-model="passwordInput"
-              hint="Contraseña"
-              secure="true"
-              class="form-input"
-            />
-          </FlexboxLayout>
+      <StackLayout class="container">
+        <FlexboxLayout alignItems="center" class="border-bottom">
+          <Image
+            src="~/images/icon_user.png"
+            width="16"
+            height="16"
+            class="icon-margin"
+          />
+          <TextField
+            v-model="usernameInput"
+            hint="Usuario"
+            class="form-input"
+          />
+        </FlexboxLayout>
 
-          <Button text="Entrar" @tap="onButtonTap" class="my-button" />
+        <FlexboxLayout alignItems="center" class="border-bottom">
+          <Image
+            src="~/images/icon_lock.png"
+            width="16"
+            height="16"
+            class="icon-margin"
+          />
+          <TextField
+            v-model="passwordInput"
+            hint="Contraseña"
+            secure="true"
+            class="form-input"
+          />
+        </FlexboxLayout>
 
-          <FlexboxLayout
-            alignItems="center"
-            justifyContent="space-between"
-            class="auth-buttons"
-          >
-            <Label horizontalAlignment="left" text="Crear cuenta" />
-            <Label horizontalAlignment="right" text="Recuperar contraseña" />
-          </FlexboxLayout>
-        </StackLayout>
-      </FlexboxLayout>
-    </GesturePanel>
+        <Button text="Entrar" @tap="onButtonTap" class="my-button" />
+
+        <FlexboxLayout
+          alignItems="center"
+          justifyContent="space-between"
+          class="auth-buttons"
+        >
+          <Label horizontalAlignment="left" text="Crear cuenta" />
+          <Label horizontalAlignment="right" text="Recuperar contraseña" />
+        </FlexboxLayout>
+      </StackLayout>
+    </FlexboxLayout>
   </Page>
 </template>
 
@@ -75,17 +65,17 @@ export default {
     return {
       usernameInput: "",
       passwordInput: "",
-      hidePassword: false,
+      hidePassword: false
     };
   },
   mounted() {},
   components: {
-    GesturePanel,
+    GesturePanel
   },
   computed: {
     message() {
       return "iVEO";
-    },
+    }
   },
   methods: {
     swipeTop(event) {
@@ -93,8 +83,8 @@ export default {
         transition: {
           name: "slideTop",
           duration: 200,
-          curve: "easeIn",
-        },
+          curve: "easeIn"
+        }
       });
     },
     swipeLeft(event) {
@@ -102,8 +92,8 @@ export default {
         transition: {
           name: "slideLeft",
           duration: 200,
-          curve: "easeIn",
-        },
+          curve: "easeIn"
+        }
       });
     },
     goHome() {
@@ -111,18 +101,18 @@ export default {
         transition: {
           name: "slideLeft",
           duration: 200,
-          curve: "easeIn",
-        },
+          curve: "easeIn"
+        }
       });
     },
     onButtonTap() {
       SpeakService.speak(Indications.SIGNINROCESS);
       indicator.show({
         message: Indications.SIGNINROCESS,
-        dimBackground: true,
+        dimBackground: true
       });
       HttpService.login(this.usernameInput, this.passwordInput)
-        .then((response) => {
+        .then(response => {
           if (response.statusCode == 404) {
             SpeakService.speak(Indications.ERRORBADREQUEST);
             indicator.hide();
@@ -144,8 +134,8 @@ export default {
         .catch(() => {
           SpeakService.speak(Indications.ERRORLOGIN);
         });
-    },
-  },
+    }
+  }
 };
 </script>
 

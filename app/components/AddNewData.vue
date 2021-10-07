@@ -1,34 +1,27 @@
 <template>
   <Page @loaded="onLoaded">
     <ActionBar title="iVEO" />
-    <GesturePanel
-      btnLabel="Escaneando objeto..."
-      @longPressStart="startCapture"
-      @longPressStop="stopCapture"
-      @longPress="doSave"
-      @swipeRight="swipeRight"
-      :showButton="false"
-    >
-      <StackLayout ref="form" class="formulario" height="100%" width="100%">
-        <Label
-          :text="indicactions.COMPLETARFORMULARIO"
-          textWrap="true"
-          textAlignment="left"
-          class="titulo"
-          marginLeft="15"
-          marginTop="15"
-        />
-        <TextField v-model="tipo" hint="Tipo de objeto o producto" />
-        <TextField v-model="marca" hint="Marca" />
-        <TextField v-model="modelo" hint="Modelo" />
-        <TextField v-model="material" hint="Material" />
-        <TextField v-model="envase" hint="Envase" />
-        <TextField v-model="contenido" hint="Contenido" />
-        <TextField v-model="color" hint="Color, si aplica" />
-        <TextField
-          v-model="descripcion"
-          hint="Complete una descripción que identifique al objeto"
-        />
+    <StackLayout ref="form" class="full" height="100%" width="100%">
+      <Label
+        :text="indicactions.COMPLETARFORMULARIO"
+        textWrap="true"
+        textAlignment="left"
+        class="titulo"
+        marginLeft="15"
+        marginTop="15"
+      />
+      <TextField v-model="tipo" hint="Tipo de objeto o producto" />
+      <TextField v-model="marca" hint="Marca" />
+      <TextField v-model="modelo" hint="Modelo" />
+      <TextField v-model="material" hint="Material" />
+      <TextField v-model="envase" hint="Envase" />
+      <TextField v-model="contenido" hint="Contenido" />
+      <TextField v-model="color" hint="Color, si aplica" />
+      <TextField
+        v-model="descripcion"
+        hint="Complete una descripción que identifique al objeto"
+      />
+      <ScrollView orientation="horizontal">
         <WrapLayout class="imagenesLayout">
           <Image
             v-for="image in imagenes"
@@ -40,8 +33,9 @@
             height="100"
           />
         </WrapLayout>
-      </StackLayout>
-    </GesturePanel>
+      </ScrollView>
+      <Button text="Guardar" @tap="doSave" class="my-button" />
+    </StackLayout>
   </Page>
 </template>
 
@@ -61,7 +55,7 @@ export default {
   name: "AddNewData",
   components: { GesturePanel },
   props: {
-    imagenes: Object,
+    imagenes: Object
   },
   data() {
     return {
@@ -73,7 +67,7 @@ export default {
       color: "",
       contenido: "",
       modelo: "",
-      indicactions: Indications,
+      indicactions: Indications
     };
   },
   methods: {
@@ -87,18 +81,18 @@ export default {
       }
       indicator.show({
         message: Indications.ADDNEWPRODUCTOPROGRESS,
-        dimBackground: true,
+        dimBackground: true
       });
       SpeakService.speak(Indications.ADDNEWPRODUCTOPROGRESS);
       HttpService.newProductoTestMulti(
         this.multiPartFileFactory(),
         this.$store.user
       )
-        .then((e) => {
+        .then(e => {
           indicator.hide();
           this.goHome();
         })
-        .catch((err) => {
+        .catch(err => {
           if (err == 403) {
             SpeakService.speak(Indications.ADDNEWPRODUCTOSINATURRIZACION);
             indicator.hide();
@@ -118,11 +112,11 @@ export default {
     },
     filesFactory() {
       let files = [];
-      this.imagenes.forEach((element) => {
+      this.imagenes.forEach(element => {
         files.push({
           name: "files",
           filename: element.path,
-          mimeType: "image/jpeg",
+          mimeType: "image/jpeg"
         });
       });
       return files;
@@ -149,8 +143,8 @@ export default {
         transition: {
           name: "slideRight",
           duration: 200,
-          curve: "easeIn",
-        },
+          curve: "easeIn"
+        }
       });
     },
     goHome() {
@@ -158,8 +152,8 @@ export default {
         transition: {
           name: "slideLeft",
           duration: 200,
-          curve: "easeIn",
-        },
+          curve: "easeIn"
+        }
       });
     },
     goSign() {
@@ -167,11 +161,11 @@ export default {
         transition: {
           name: "slideLeft",
           duration: 200,
-          curve: "easeIn",
-        },
+          curve: "easeIn"
+        }
       });
-    },
-  },
+    }
+  }
 };
 </script>
 
@@ -180,11 +174,11 @@ ActionBar {
   background-color: #000000;
   color: #ffffff;
 }
-Label {
+label {
   font-size: 14;
   color: #ffffff;
 }
-Button {
+button {
   padding: 8 12;
   color: #333333;
   background-color: lightgray;
@@ -208,7 +202,7 @@ Button {
   background-color: white;
 }
 .titulo {
-  color: #333333;
+  color: white;
   font-size: 16;
   font-weight: 700;
 }
@@ -219,5 +213,22 @@ Button {
 .imagenesLayout {
   margin-top: 15;
   margin-left: 15;
+}
+.my-button {
+  background-color: #4bd5dc;
+  color: white;
+  font-weight: bold;
+  border-radius: 25;
+  padding-top: 14;
+  padding-bottom: 14;
+  text-transform: uppercase;
+  letter-spacing: 0.1;
+  margin-bottom: 20;
+  margin-top: 20;
+}
+.full {
+  height: 100%;
+  width: 100%;
+  background-color: black;
 }
 </style>

@@ -24,7 +24,7 @@
           :roiLeftOffset="'10%'"
           :imageCapture="enableImageCapture"
           :imageCaptureAmount="6"
-          :imageCaptureInterval="300"
+          :imageCaptureInterval="100"
           @imageCaptured="doImageCaptured"
           @endCapture="doEndCapture"
           @status="doStatus"
@@ -44,8 +44,7 @@
       </GridLayout>
       <GesturePanel
         btnLabel="Escaneando objeto.."
-        @longPressStart="startCapture"
-        @longPressStop="stopCapture"
+        @longPress="startCapture"
         @swipeRight="swipeRight"
       />
     </GridLayout>
@@ -59,6 +58,7 @@ import { HttpService } from "~/services/HttpService";
 import { SpeakService } from "~/services/SpeakService";
 import AddNewData from "~/components/AddNewData";
 import { Indications } from "~/services/locale/indications-es";
+import Home from "~/components/Home";
 
 export default {
   components: { ActionButton, GesturePanel },
@@ -75,6 +75,7 @@ export default {
     showThumbnail: false,
     imagenes: [],
     imagen: null,
+    blockLongPress: false
   }),
   methods: {
     async showThumbnailAsync() {
@@ -82,6 +83,7 @@ export default {
       setTimeout(() => (this.showThumbnail = false), 1500);
     },
     async onLoaded() {
+      this.blockLongPress = false;
       this.$yoo.camera.registerElement(this.$refs.yooCamera);
       await this.doPreview();
     },
@@ -95,8 +97,11 @@ export default {
       }
     },
     startCapture() {
-      this.imagenes = [];
-      this.$yoo.camera.startCapture("frame");
+      if (!this.blockLongPress) {
+        this.imagenes = [];
+        this.$yoo.camera.startCapture("frame");
+        this.blockLongPress = true;
+      }
     },
     stopCapture() {
       this.$yoo.camera.stopCapture();
@@ -110,7 +115,7 @@ export default {
       inferences,
       darkness,
       lightness,
-      sharpness,
+      sharpness
     }) {
       if (total === 0) {
         console.log(
@@ -137,11 +142,11 @@ export default {
         transition: {
           name: "slideLeft",
           duration: 200,
-          curve: "easeIn",
+          curve: "easeIn"
         },
         props: {
-          imagenes: this.imagenes,
-        },
+          imagenes: this.imagenes
+        }
       });
     },
     swipeRight() {
@@ -149,11 +154,11 @@ export default {
         transition: {
           name: "slideRight",
           duration: 200,
-          curve: "easeIn",
-        },
+          curve: "easeIn"
+        }
       });
-    },
-  },
+    }
+  }
 };
 </script>
 
@@ -162,11 +167,11 @@ ActionBar {
   background-color: #000000;
   color: #ffffff;
 }
-Label {
+label {
   font-size: 14;
   color: #ffffff;
 }
-Button {
+button {
   padding: 8 12;
   color: #333333;
   background-color: lightgray;

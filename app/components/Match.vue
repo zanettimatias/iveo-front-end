@@ -62,7 +62,7 @@ import { Indications } from "~/services/locale/indications-es";
 import { LoadingIndicator } from "@nstudio/nativescript-loading-indicator";
 import Home from "@/components/Home";
 import personality from "~/services/Personality";
-import SignIn from "~/components/SignIn.vue"
+import SignIn from "~/components/SignIn.vue";
 
 const indicator = new LoadingIndicator();
 
@@ -81,6 +81,7 @@ export default {
     showThumbnail: false,
     imagenes: [],
     imagen: null,
+    blockLongPress: false
   }),
   mounted() {},
   methods: {
@@ -100,8 +101,16 @@ export default {
       }
     },
     startCapture() {
-      this.imagenes = [];
-      this.$yoo.camera.startCapture("frame");
+      if (!this.blockLongPress) {
+        this.imagenes = [];
+        this.$yoo.camera.startCapture("frame");
+        this.blockLongPressButton();
+      }
+    },
+    async blockLongPressButton() {
+      this.blockLongPress = true;
+      await new Promise(resolve => setTimeout(resolve, 4000));
+      this.blockLongPress = false;
     },
     stopCapture() {
       this.$yoo.camera.stopCapture();
@@ -115,7 +124,7 @@ export default {
       inferences,
       darkness,
       lightness,
-      sharpness,
+      sharpness
     }) {
       if (total === 0) {
         console.log(
@@ -140,7 +149,7 @@ export default {
     doEndCapture() {
       SpeakService.speak(Indications.MATCHPROGRESS).then(() => {
         HttpService.match(this.multiPartFileFactory())
-          .then((e) => {
+          .then(e => {
             if (e.data !== "[]") {
               let data = JSON.parse(e.data);
               SpeakService.speak(personality.getFrase(data[0]));
@@ -148,7 +157,7 @@ export default {
               SpeakService.speak(Indications.MATCHFAILED);
             }
           })
-          .catch((err) => {
+          .catch(err => {
             SpeakService.speak(Indications.ADDNEWPRODUCTOERROR);
             console.log(err);
           });
@@ -161,11 +170,11 @@ export default {
     },
     filesFactory() {
       let files = [];
-      this.imagenes.forEach((element) => {
+      this.imagenes.forEach(element => {
         files.push({
           name: "files",
           filename: element.path,
-          mimeType: "image/jpeg",
+          mimeType: "image/jpeg"
         });
       });
       return files;
@@ -176,20 +185,20 @@ export default {
           transition: {
             name: "slideRight",
             duration: 200,
-            curve: "easeIn",
-          },
+            curve: "easeIn"
+          }
         });
       } else {
         this.$navigateTo(Home, {
           transition: {
             name: "slideRight",
             duration: 200,
-            curve: "easeIn",
-          },
+            curve: "easeIn"
+          }
         });
       }
-    },
-  },
+    }
+  }
 };
 </script>
 
@@ -198,11 +207,11 @@ ActionBar {
   background-color: #000000;
   color: #ffffff;
 }
-Label {
+label {
   font-size: 14;
   color: #ffffff;
 }
-Button {
+button {
   padding: 8 12;
   color: #333333;
   background-color: lightgray;

@@ -38,7 +38,10 @@ export default {
       buttonLeft: 0,
       buttonHeight: 120,
       buttonWidth: 120,
-      mostrarBoton: false
+      mostrarBoton: false,
+      seconds: null,
+      timer: null,
+      longPressFlag: false
     };
   },
   components: { ActionButton, Icon },
@@ -54,10 +57,18 @@ export default {
     onTouch(e) {
       let x, y;
       if (e.action == "down") {
-        this.$emit("longPressStart", true);
+        this.timer = setTimeout(() => {
+          this.longPressFlag = true;
+          this.$emit("longPressStart", true);
+        }, 2000);
       }
       if (e.action == "up") {
-        this.$emit("longPressStop", true);
+        if (this.longPressFlag) {
+          this.$emit("longPressStop", true);
+        } else {
+          clearTimeout(this.timer);
+          this.longPressFlag = false;
+        }
       }
       if (e.action == "down" || e.action == "move") {
         this.mostrarBoton = true;

@@ -65,24 +65,24 @@ import SignUp from "~/components/SignUp";
 import { LoadingIndicator } from "@nstudio/nativescript-loading-indicator";
 const indicator = new LoadingIndicator();
 import Icon from "~/components/Icon";
-import PasswordRecovery from "~/components/PasswordRecovery"
+import PasswordRecovery from "~/components/PasswordRecovery";
 export default {
   data() {
     return {
       usernameInput: "",
       passwordInput: "",
-      hidePassword: false,
+      hidePassword: false
     };
   },
   mounted() {},
   components: {
     GesturePanel,
-    Icon,
+    Icon
   },
   computed: {
     message() {
       return "iVEO";
-    },
+    }
   },
   methods: {
     swipe(event) {
@@ -95,8 +95,8 @@ export default {
         transition: {
           name: "slideRight",
           duration: 200,
-          curve: "easeIn",
-        },
+          curve: "easeIn"
+        }
       });
     },
     swipeLeft(event) {
@@ -104,8 +104,8 @@ export default {
         transition: {
           name: "slideLeft",
           duration: 200,
-          curve: "easeIn",
-        },
+          curve: "easeIn"
+        }
       });
     },
     swipeTop(event) {
@@ -113,8 +113,8 @@ export default {
         transition: {
           name: "slideTop",
           duration: 200,
-          curve: "easeIn",
-        },
+          curve: "easeIn"
+        }
       });
     },
     goHome() {
@@ -122,18 +122,18 @@ export default {
         transition: {
           name: "slideLeft",
           duration: 200,
-          curve: "easeIn",
-        },
+          curve: "easeIn"
+        }
       });
     },
     onButtonTap() {
       SpeakService.speak(Indications.SIGNINROCESS);
       indicator.show({
         message: Indications.SIGNINROCESS,
-        dimBackground: true,
+        dimBackground: true
       });
       HttpService.login(this.usernameInput, this.passwordInput)
-        .then((response) => {
+        .then(response => {
           if (response.statusCode == 404) {
             SpeakService.speak(Indications.ERRORBADREQUEST);
             indicator.hide();
@@ -155,8 +155,8 @@ export default {
         .catch(() => {
           SpeakService.speak(Indications.ERRORLOGIN);
         });
-    },
-  },
+    }
+  }
 };
 </script>
 
@@ -200,6 +200,7 @@ ActionBar {
   border: 0;
   font-size: 15;
   border-bottom-width: 0;
+  width: 200;
 }
 .icon-margin {
   margin-right: 10;

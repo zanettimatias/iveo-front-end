@@ -24,7 +24,7 @@
           :roiLeftOffset="'10%'"
           :imageCapture="enableImageCapture"
           :imageCaptureAmount="6"
-          :imageCaptureInterval="100"
+          :imageCaptureInterval="300"
           @imageCaptured="doImageCaptured"
           @endCapture="doEndCapture"
           @status="doStatus"
@@ -43,8 +43,8 @@
         </GridLayout>
       </GridLayout>
       <GesturePanel
-        btnLabel="Escaneando objeto.."
-        @longPress="startCapture"
+        @longPressStart="startCapture"
+        @longPressStop="stopCapture"
         @swipeRight="swipeRight"
       />
     </GridLayout>
@@ -85,6 +85,7 @@ export default {
     async onLoaded() {
       this.blockLongPress = false;
       this.$yoo.camera.registerElement(this.$refs.yooCamera);
+      console.log("Camera Loaded");
       await this.doPreview();
     },
     async doPreview() {
@@ -97,15 +98,16 @@ export default {
       }
     },
     startCapture() {
-      if (!this.blockLongPress) {
-        this.imagenes = [];
-        this.$yoo.camera.startCapture("frame");
-        this.blockLongPress = true;
-      }
+      this.imagenes = [];
+      this.$yoo.camera.startCapture("frame");
     },
     stopCapture() {
-      this.$yoo.camera.stopCapture();
-      this.doEndCapture();
+      if (!this.blockLongPress) {
+        this.$yoo.camera.stopCapture();
+        this.doEndCapture();
+      } else {
+        this.blockLongPress = false;
+      }
     },
     doImageCaptured({
       type,
@@ -138,6 +140,7 @@ export default {
       this.imagenes.push({ path: path, source: source });
     },
     doEndCapture() {
+      this.blockLongPress = true;
       this.$navigateTo(AddNewData, {
         transition: {
           name: "slideLeft",

@@ -67,8 +67,8 @@ export default {
           this.$emit("longPressStop", true);
         } else {
           clearTimeout(this.timer);
-          this.longPressFlag = false;
         }
+        this.longPressFlag = false;
       }
       if (e.action == "down" || e.action == "move") {
         this.mostrarBoton = true;

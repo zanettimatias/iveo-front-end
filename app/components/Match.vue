@@ -148,7 +148,7 @@ export default {
     },
     doEndCapture() {
       SpeakService.speak(Indications.MATCHPROGRESS).then(() => {
-        HttpService.match(this.multiPartFileFactory())
+        HttpService.match(this.multiPartFileFactory(), this.$store.user)
           .then(e => {
             if (e.data !== "[]") {
               let data = JSON.parse(e.data);

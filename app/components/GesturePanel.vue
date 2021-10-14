@@ -10,7 +10,7 @@
     @doubleTap="doubleTap"
   >
     <slot />
-    <ActionButton
+    <Icon
       v-if="showButton"
       :label="btnLabel"
       :top="buttonTop"
@@ -24,6 +24,7 @@
 <script>
 import ActionButton from "~/components/ActionButton.vue";
 import { Screen } from "@nativescript/core/platform";
+import Icon from "~/components/Icon";
 
 const xBottomOriginal = Screen.mainScreen.widthDIPs;
 const yBottomOriginal = Screen.mainScreen.heightDIPs;
@@ -37,17 +38,17 @@ export default {
       buttonLeft: 0,
       buttonHeight: 120,
       buttonWidth: 120,
-      mostrarBoton: false,
+      mostrarBoton: false
     };
   },
-  components: { ActionButton },
+  components: { ActionButton, Icon },
   props: {
     btnLabel: {
-      default: "",
+      default: ""
     },
     showButton: {
-      default: true,
-    },
+      default: true
+    }
   },
   methods: {
     onTouch(e) {
@@ -60,8 +61,8 @@ export default {
       }
       if (e.action == "down" || e.action == "move") {
         this.mostrarBoton = true;
-        x = e.getX() - this.buttonWidth / 2;
-        y = e.getY() - this.buttonHeight / 2;
+        x = e.getX() - this.buttonWidth - 30 / 2;
+        y = e.getY() - this.buttonHeight - 30 / 2;
       } else {
         this.mostrarBoton = false;
       }
@@ -79,9 +80,8 @@ export default {
     },
     doubleTap() {
       this.$emit("doubleTap");
-    },
-  },
+    }
+  }
 };
 </script>
-<style scoped>
-</style>
+<style scoped></style>
